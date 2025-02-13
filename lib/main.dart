@@ -39,12 +39,12 @@ class MyApp extends StatelessWidget {
                         child: ClipRRect(
                           borderRadius:
                           BorderRadius.circular(32),
-                          child: networkImageCommon(
-                              index%2 == 0?"https://t3.ftcdn.net/jpg/03/51/15/08/360_F_351150802_VAlf5qCG8jhHdMG75g2EoqHBwV0CSfSo.jpg":"https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885_640.jpg",
-                              500,
+                          child: NetworkImageCommon(
+                            URL: index%2 == 0?"https://t3.ftcdn.net/jpg/03/51/15/08/360_F_351150802_VAlf5qCG8jhHdMG75g2EoqHBwV0CSfSo.jpg":"https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885_640.jpg",
+                              defaultImage: "assets/images/teapioca.png",
                               width: 500,
                               height: 500,
-                              false),
+                              ),
                         )
                     ),
                   ),),
@@ -73,42 +73,6 @@ class MyApp extends StatelessWidget {
   }
 }
 
-Widget networkImageCommon(String image, double placeHeight, bool isSlider,
-    {double? height, double? width, BoxFit? boxFit}) {
-  // return SizedBox(height: 100, width: 100, child: Image.network(image));
-    return SizedBox(
-      height: 400,
-      width: 400,
-      child: FadeInImage(
-      fadeInDuration: const Duration(milliseconds: 150),
-      image: NetworkImage(image),
-      height: height ?? height,
-      width: width ?? width,
-      fit: boxFit ?? BoxFit.cover,
-      placeholder: sliderPlaceHolder(),
-      placeholderErrorBuilder: ((context, error, stackTrace) {
-        return erroWidget(placeHeight);
-      }),
-      imageErrorBuilder: ((context, error, stackTrace) {
-        return erroWidget(placeHeight);
-      }),
-        ),
-    );
-}
-sliderPlaceHolder() {
-  return const AssetImage(
-    "assets/images/teapioca.png",
-  );
-}
-
-erroWidget(double size) {
-  return Image.asset(
-    "assets/images/teapioca.png",
-    width: size,
-    height: size,
-  );
-}
-
 class PageSecond extends StatefulWidget {
   const PageSecond({super.key});
 
@@ -134,4 +98,46 @@ class _PageSecondState extends State<PageSecond> {
       ),
     );
   }
+}
+
+class NetworkImageCommon extends StatelessWidget {
+  final double height;
+  final double width;
+  final String URL;
+  final BoxFit? fit;
+  final String defaultImage;
+  const NetworkImageCommon({super.key, required this.height, required this.width, required this.URL, this.fit, required this.defaultImage});
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: height,
+      width: width,
+      child: FadeInImage(
+        fadeInDuration: const Duration(milliseconds: 150),
+        image: NetworkImage(URL),
+        fit: fit,
+        placeholder: sliderPlaceHolder(defaultImage),
+        placeholderErrorBuilder: ((context, error, stackTrace) {
+          return errorWidget(defaultImage);
+        }),
+        imageErrorBuilder: ((context, error, stackTrace) {
+          return errorWidget(defaultImage);
+        }),
+      ),
+    );
+  }
+
+  sliderPlaceHolder(String defaultImage) {
+    return AssetImage(
+      defaultImage,
+    );
+  }
+
+  errorWidget(String defaultImage) {
+    return Image.asset(
+      defaultImage,
+    );
+  }
+
 }
